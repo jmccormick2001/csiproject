@@ -1,0 +1,49 @@
+
+replicaCount: 1
+
+instanceCount: 1
+
+# prefix for pv name
+#volumeNamePrefix: csi
+volumeNamePrefix: csi128
+
+# log level of driver
+logLevel: "debug"
+
+# name of the driver
+# note same name will be used for provisioner name
+csiDriverName: "csi-driver"
+csiDriverVersion: "0.1.0"
+
+# set e2etesting to true if you want to expose the CSI socket (e.g. for e2e testing)
+e2etesting: "true"
+removeDomainName: "false"
+
+# Image paths
+images:
+  attachersidecar: "registry.k8s.io/sig-storage/csi-attacher@sha256:033c2e5d3a190686c32298e0ae972a79aff903958db204a084c503356e66967d" # v4.4.1
+  attachersidecar_pull_policy: "IfNotPresent"
+
+  csidriver: "zot.io/csi-driver:latest"
+  csidriver_pull_policy: "Always"
+
+  provisionersidecar: "registry.k8s.io/sig-storage/csi-provisioner:v4.0.0"
+  provisionersidecar_pull_policy: "IfNotPresent"
+
+  registrarsidecar: "registry.k8s.io/sig-storage/csi-node-driver-registrar@sha256:cd21e19cd8bbd5bc56f1b4f1398a436e7897da2995d6d036c9729be3f4e456e6" # v2.9.0
+  registrarsidecar_pull_policy: "IfNotPresent"
+
+  resizersidecar: "registry.k8s.io/sig-storage/csi-resizer@sha256:f1f352df97874442624fcef23eab04aa038f66cb0e361212f6ec09e92998184d" # v1.9.0
+  resizersidecar_pull_policy: "IfNotPresent"
+
+  snapshottersidecar: "registry.k8s.io/sig-storage/csi-snapshotter@sha256:65c5ffde8fe6f68a2f19310cfd789befe7bdd16eedda219d9a0024f8fc68b802" # v6.3.1
+  snapshottersidecar_pull_policy: "IfNotPresent"
+
+  livenesssidecar: "registry.k8s.io/sig-storage/livenessprobe@sha256:82adbebdf5d5a1f40f246aef8ddbee7f89dea190652aefe83336008e69f9a89f" # v2.11.0
+  livenesssidecar_pull_policy: "IfNotPresent"
+
+Storage_Cred:
+  - SecretName: "storage-creds"
+    username: "csitesting"
+    password: "csitestingisfun"
+    hostname: "192.168.0.105"
