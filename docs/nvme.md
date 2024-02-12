@@ -120,3 +120,7 @@ You detach the initiator from the nvme tcp device with:
 ```
 nvme disconnect /dev/nvme0n1 -n nvme-test-target
 ```
+
+# nvme namespaces
+
+https://narasimhan-v.github.io/2020/06/12/Managing-NVMe-Namespaces.html
