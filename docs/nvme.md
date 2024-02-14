@@ -17,6 +17,9 @@ chown qemu:qemu /vm-files/nvme.img
 
 # target Setup
 
+Instructions on how to configure QEMU nvme devices with multiple namespaces is found here;
+https://qemu-project.gitlab.io/qemu/system/devices/nvme.html
+
 On the target host, I edited the VM XML configuration, adding the following at the end:
 ```xml
 <qemu:commandline>
@@ -25,6 +28,21 @@ On the target host, I edited the VM XML configuration, adding the following at t
   <qemu:arg value='-device'/>
   <qemu:arg value='nvme,drive=D22,serial=1234'/>
 </qemu:commandline>
+```
+
+```xml
+  <qemu:commandline>
+    <qemu:arg value="-device"/>
+    <qemu:arg value="nvme,id=nvme-ctrl-0,serial=deadbeef"/>
+    <qemu:arg value="-drive"/>
+    <qemu:arg value="file=/vm-files/nvm-1.img,if=none,id=nvm-1"/>
+    <qemu:arg value="-device"/>
+    <qemu:arg value="nvme-ns,drive=nvm-1"/>
+    <qemu:arg value="-drive"/>
+    <qemu:arg value="file=/vm-files/nvm-2.img,if=none,id=nvm-2"/>
+    <qemu:arg value="-device"/>
+    <qemu:arg value="nvme-ns,drive=nvm-2"/>
+  </qemu:commandline>
 ```
 
 At the top of the XLM file, I added this to the first line:
