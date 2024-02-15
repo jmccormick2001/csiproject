@@ -5,7 +5,7 @@ import (
 	"sort"
 	"sync"
 
-	"example.com/csiproject/backend/api"
+	"example.com/csiproject/backend/model"
 )
 
 var (
@@ -20,11 +20,11 @@ type DeleteResponse struct {
 // Database is the interface used by the server to load and store volumes.
 type Database interface {
 	// GetVolumes returns a copy of all volumes, sorted by ID.
-	GetVolumes() ([]api.Volume, error)
+	GetVolumes() ([]model.Volume, error)
 
 	// GetVolumesByID returns a single volume by ID, or ErrDoesNotExist if
 	// an volume with that ID does not exist.
-	GetVolumeByID(id string) (api.Volume, error)
+	GetVolumeByID(id string) (model.Volume, error)
 
 	// DeleteVolumesByID returns ErrDoesNotExist if
 	// an volume with that ID does not exist, otherwise deletes the volume entry.
@@ -32,27 +32,27 @@ type Database interface {
 
 	// AddVolume adds a single volume, or ErrAlreadyExists if an volume with
 	// the given ID already exists.
-	AddVolume(volume api.Volume) error
+	AddVolume(volume model.Volume) error
 }
 
 // MemoryDatabase is a Database implementation that uses a simple
 // in-memory map to store the volumes.
 type MemoryDatabase struct {
 	lock    sync.RWMutex
-	volumes map[string]api.Volume
+	volumes map[string]model.Volume
 }
 
 // NewMemoryDatabase creates a new in-memory database.
 func NewMemoryDatabase() *MemoryDatabase {
-	return &MemoryDatabase{volumes: make(map[string]api.Volume)}
+	return &MemoryDatabase{volumes: make(map[string]model.Volume)}
 }
 
-func (d *MemoryDatabase) GetVolumes() ([]api.Volume, error) {
+func (d *MemoryDatabase) GetVolumes() ([]model.Volume, error) {
 	d.lock.RLock()
 	defer d.lock.RUnlock()
 
 	// Make a copy of the volumes map (as a slice)
-	volumes := make([]api.Volume, 0, len(d.volumes))
+	volumes := make([]model.Volume, 0, len(d.volumes))
 	for _, volume := range d.volumes {
 		volumes = append(volumes, volume)
 	}
@@ -64,18 +64,18 @@ func (d *MemoryDatabase) GetVolumes() ([]api.Volume, error) {
 	return volumes, nil
 }
 
-func (d *MemoryDatabase) GetVolumeByID(id string) (api.Volume, error) {
+func (d *MemoryDatabase) GetVolumeByID(id string) (model.Volume, error) {
 	d.lock.RLock()
 	defer d.lock.RUnlock()
 
 	volume, ok := d.volumes[id]
 	if !ok {
-		return api.Volume{}, ErrDoesNotExist
+		return model.Volume{}, ErrDoesNotExist
 	}
 	return volume, nil
 }
 
-func (d *MemoryDatabase) AddVolume(volume api.Volume) error {
+func (d *MemoryDatabase) AddVolume(volume model.Volume) error {
 	d.lock.Lock()
 	defer d.lock.Unlock()
 
