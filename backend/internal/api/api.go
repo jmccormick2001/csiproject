@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"example.com/csiproject/backend/db"
+	"example.com/csiproject/backend/internal/db"
 	"example.com/csiproject/backend/model"
 )
 

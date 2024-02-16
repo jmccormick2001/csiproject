@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"example.com/csiproject/backend/api"
-	"example.com/csiproject/backend/db"
+	"example.com/csiproject/backend/internal/api"
+	"example.com/csiproject/backend/internal/db"
 	"example.com/csiproject/backend/model"
 )
 
