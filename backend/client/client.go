@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"bytes"
@@ -6,9 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
-	"time"
 
 	"example.com/csiproject/backend/model"
 )
@@ -28,43 +26,6 @@ type CreateVolumeResponse struct {
 }
 type GetAllVolumesResponse struct {
 	Volumes []model.Volume
-}
-
-func main() {
-
-	client := Client{
-		Hostname: "localhost",
-		Port:     "10000",
-	}
-
-	ctx := context.Background()
-	timeout := 30 * time.Second
-	reqContext, _ := context.WithTimeout(ctx, timeout)
-	someVolume, err := client.GetVolume(reqContext, "1")
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("volume response %+v\n", someVolume)
-
-	volume := model.Volume{ID: "13", Name: "leader", Hostport: "192.168.0.112", Size: "1G"}
-	newVolume, err := client.CreateVolume(reqContext, volume)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(newVolume)
-
-	mm, err := client.GetAllVolumes(reqContext)
-	if err != nil {
-		log.Fatal(err)
-	}
-	for i := 0; i < len(mm.Volumes); i++ {
-		fmt.Printf("get all volumes response %d %+v\n", i, mm.Volumes[i])
-	}
-	err = client.DeleteVolume(reqContext, "13")
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("delete volume worked\n")
 }
 
 func NewClient(hostname, port string) *Client {

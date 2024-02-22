@@ -1,0 +1,23 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: mysc
+provisioner: csi-driver
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+parameters:
+  csi.storage.k8s.io/controller-expand-secret-name: csi-driver-creds
+  csi.storage.k8s.io/controller-expand-secret-namespace: default
+  csi.storage.k8s.io/controller-publish-secret-name: csi-driver-creds
+  csi.storage.k8s.io/controller-publish-secret-namespace: default
+  csi.storage.k8s.io/node-publish-secret-name: csi-driver-creds
+  csi.storage.k8s.io/node-publish-secret-namespace: default
+  csi.storage.k8s.io/node-stage-secret-name: csi-driver-creds
+  csi.storage.k8s.io/node-stage-secret-namespace: default
+  csi.storage.k8s.io/provisioner-secret-name: csi-driver-creds
+  csi.storage.k8s.io/provisioner-secret-namespace: default
+  csi.storage.k8s.io/fstype: xfs
+  uid: "3000" # UID of volume
+  gid: "3000" # GID of volume
+  #unix_permissions: "777" # optional volume mount permissions

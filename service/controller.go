@@ -4,6 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+	"math/rand"
+	"strconv"
+	"time"
+
+	"example.com/csiproject/backend/client"
+	"example.com/csiproject/backend/model"
 
 	//"infinibox-csi-driver/api"
 	//"infinibox-csi-driver/api/clientgo"
@@ -55,7 +62,35 @@ func (s *ControllerServer) CreateVolume(ctx context.Context, req *csi.CreateVolu
 		return nil, status.Errorf(codes.InvalidArgument, "VolumeCapabilities invalid: %v", error)
 	}
 
-	slog.Info("CreateVolume", "Finish - Name", volName, "ID", volName, createVolResp.Volume.VolumeId)
+	client := client.Client{
+		Hostname: "192.168.0.108",
+		Port:     "10000",
+	}
+
+	timeout := 30 * time.Second
+	reqContext, _ := context.WithTimeout(ctx, timeout)
+
+	volumeID := rand.Int()
+
+	volume := model.Volume{ID: strconv.Itoa(volumeID), Name: "leader", Hostport: "192.168.0.112", Size: "1G"}
+	newVolume, err := client.CreateVolume(reqContext, volume)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(newVolume)
+
+	scParameters := make(map[string]string) //TODO
+
+	createVolResp = &csi.CreateVolumeResponse{
+		Volume: &csi.Volume{
+			VolumeId:      strconv.Itoa(volumeID),
+			CapacityBytes: 1073741824,
+			VolumeContext: scParameters,
+			ContentSource: req.GetVolumeContentSource(),
+		},
+	}
+
+	slog.Info("CreateVolume Finish", "Name", volName, "ID", createVolResp.Volume.VolumeId)
 	return
 }
 
@@ -165,7 +200,7 @@ func validateCapabilities(capabilities []*csi.VolumeCapability) error {
 }
 
 func (s *ControllerServer) ValidateVolumeCapabilities(ctx context.Context, req *csi.ValidateVolumeCapabilitiesRequest) (validateVolCapsResponse *csi.ValidateVolumeCapabilitiesResponse, err error) {
-	slog.Info("ValidateVolumeCapabilities Started - ID: %s", req.GetVolumeId())
+	slog.Info("ValidateVolumeCapabilities Started ", "ID", req.GetVolumeId())
 
 	if req.GetVolumeId() == "" {
 		err := fmt.Errorf("ValidateVolumeCapabilities error volumeId parameter was empty")
